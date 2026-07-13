@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project-specific generated and local files
+dashboard/node_modules/
+dashboard/dist/
+*.tsbuildinfo
+.DS_Store
+worker/.venv/
+

@@ -1,0 +1,53 @@
+source_pages:
+  - id: seoul_notice
+    site_name: 서울시청
+    page_name: 공지사항
+    category: government
+    bot_profile: government
+    enabled: false
+    list_url: "REPLACE_WITH_REAL_URL"
+    base_url: "REPLACE_WITH_REAL_BASE_URL"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".board-list tbody tr"
+      title: ".title a"
+      link: ".title a"
+      date: ".date"
+      external_id: ".number"
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (+https://github.com/your-org/site-alert-hub)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: mega_event
+    site_name: 메가커피
+    page_name: 이벤트
+    category: cafe
+    bot_profile: cafe
+    enabled: false
+    list_url: "REPLACE_WITH_REAL_URL"
+    base_url: "REPLACE_WITH_REAL_BASE_URL"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".event-list .item"
+      title: ".event-title"
+      link: "a"
+      date: null
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (+https://github.com/your-org/site-alert-hub)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+

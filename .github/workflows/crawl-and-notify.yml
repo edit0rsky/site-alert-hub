@@ -1,0 +1,71 @@
+name: Crawl and notify
+
+on:
+  schedule:
+    - cron: "7/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      source_page_id:
+        description: "특정 게시판만 확인"
+        required: false
+        type: string
+      dry_run:
+        description: "Telegram 전송 없이 확인"
+        required: false
+        default: false
+        type: boolean
+      baseline:
+        description: "기존 글을 baseline으로만 저장"
+        required: false
+        default: false
+        type: boolean
+      delivery_id:
+        description: "특정 실패 전송 재시도"
+        required: false
+        type: string
+
+concurrency:
+  group: site-alert-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      TELEGRAM_BOTS_JSON: ${{ secrets.TELEGRAM_BOTS_JSON }}
+      SOURCE_PAGES_CONFIG: config/source-pages.yml
+      INPUT_SOURCE_PAGE_ID: ${{ inputs.source_page_id }}
+      INPUT_DRY_RUN: ${{ inputs.dry_run }}
+      INPUT_BASELINE: ${{ inputs.baseline }}
+      INPUT_DELIVERY_ID: ${{ inputs.delivery_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q "render_js: true" config/source-pages.yml; then
+            pip install --disable-pip-version-check -e 'worker[browser]'
+            python -m playwright install chromium
+          else
+            pip install --disable-pip-version-check -e worker
+          fi
+      - name: Run worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(crawl)
+          if [ -n "${INPUT_SOURCE_PAGE_ID:-}" ]; then args+=(--source-page-id "$INPUT_SOURCE_PAGE_ID"); fi
+          if [ "${INPUT_DRY_RUN:-false}" = "true" ]; then args+=(--dry-run); fi
+          if [ "${INPUT_BASELINE:-false}" = "true" ]; then args+=(--baseline); fi
+          if [ -n "${INPUT_DELIVERY_ID:-}" ]; then args+=(--delivery-id "$INPUT_DELIVERY_ID"); fi
+          python -m site_alert.main "${args[@]}"

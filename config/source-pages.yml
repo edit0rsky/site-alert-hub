@@ -1,0 +1,185 @@
+# These public list pages were supplied for this deployment. Run a baseline
+# once after applying the migration so existing rows are stored without
+# Telegram notifications. Check each site's terms and robots.txt before use.
+source_pages:
+  - id: seongbuk_notice
+    site_name: 성북구청
+    page_name: 새소식
+    category: government
+    bot_profile: government
+    enabled: true
+    list_url: "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=41&key=6350"
+    base_url: "https://www.sb.go.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: "table tbody tr"
+      title: ".p-subject a"
+      link: ".p-subject a"
+      date: "td:nth-child(4)"
+      external_id: "td:nth-child(1)"
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: seoul_news
+    site_name: 서울시청
+    page_name: 서울소식
+    category: government
+    bot_profile: government
+    enabled: true
+    list_url: "https://www.seoul.go.kr/realmnews/in/list.do"
+    base_url: "https://www.seoul.go.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".item"
+      title: ".subject"
+      link: "a"
+      date: ".date"
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: seoul_festivals
+    site_name: 서울시청
+    page_name: 행사·축제
+    category: government
+    bot_profile: government
+    enabled: true
+    list_url: "https://www.seoul.go.kr/thismteventfstvl/list.do"
+    base_url: "https://www.seoul.go.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".item"
+      title: ".subject"
+      link: "a"
+      date: ".date"
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: seoul_event_requests
+    site_name: 서울시청
+    page_name: 이벤트·신청
+    category: government
+    bot_profile: government
+    enabled: true
+    list_url: "https://www.seoul.go.kr/eventreqst/list.do"
+    base_url: "https://www.seoul.go.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".item"
+      title: ".subject"
+      link: "a"
+      date: ".date"
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: mega_event
+    site_name: 메가MGC커피
+    page_name: 이벤트
+    category: cafe
+    bot_profile: cafe
+    enabled: true
+    list_url: "https://www.mega-mgccoffee.com/bbs/?bbs_category=3"
+    base_url: "https://www.mega-mgccoffee.com"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".board_list_gallery > a"
+      title: ".cont_text_title .text1"
+      link: "a"
+      date: null
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: venti_event
+    site_name: 더벤티
+    page_name: 이벤트
+    category: cafe
+    bot_profile: cafe
+    enabled: true
+    list_url: "https://theventi.co.kr/new2022/news/event.html"
+    base_url: "https://theventi.co.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".img_board_list .item"
+      title: ".tit"
+      link: "a"
+      date: null
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
+
+  - id: gongcha_event
+    site_name: 공차
+    page_name: 이벤트
+    category: cafe
+    bot_profile: cafe
+    enabled: true
+    list_url: "https://www.gong-cha.co.kr/brand/content/eventlist"
+    base_url: "https://www.gong-cha.co.kr"
+    parser: generic_html
+    render_js: false
+    selectors:
+      item: ".event-list li"
+      title: ".event-text .t1"
+      link: ".event-text a"
+      date: null
+      external_id: null
+    request:
+      timeout_seconds: 20
+      interval_seconds: 1
+      user_agent: "SiteAlertHubBot/1.0 (board-monitor; contact: replace-with-contact@example.com)"
+    crawl:
+      max_items: 30
+      max_retries: 3
+    initial_sync:
+      mode: baseline
