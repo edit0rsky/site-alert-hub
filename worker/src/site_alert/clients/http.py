@@ -4,6 +4,7 @@ import logging
 import time
 import urllib.robotparser
 from dataclasses import dataclass
+from importlib import import_module
 from urllib.parse import urlsplit, urlunsplit
 
 import httpx
@@ -95,10 +96,18 @@ class HttpFetcher:
                 elapsed = int((time.perf_counter() - started) * 1000)
                 if response.status_code == 200:
                     return FetchResult(response.text, response.status_code, elapsed)
-                retryable = response.status_code == 429 or 500 <= response.status_code <= 599
-                code = "http_rate_limited" if response.status_code == 429 else "http_status_error"
+                retryable = (
+                    response.status_code == 429 or 500 <= response.status_code <= 599
+                )
+                code = (
+                    "http_rate_limited"
+                    if response.status_code == 429
+                    else "http_status_error"
+                )
                 last_error = FetchError(
-                    code, f"board returned HTTP {response.status_code}", response.status_code
+                    code,
+                    f"board returned HTTP {response.status_code}",
+                    response.status_code,
                 )
                 if not retryable:
                     break
@@ -115,17 +124,14 @@ class BrowserFetcher(HttpFetcher):
     def __init__(self, robots_timeout_seconds: float = 10) -> None:
         super().__init__(robots_timeout_seconds)
         try:
-            from playwright.sync_api import (  # type: ignore[import-not-found]
-                TimeoutError as PlaywrightTimeoutError,
-            )
-            from playwright.sync_api import sync_playwright  # type: ignore[import-not-found]
+            playwright_sync_api = import_module("playwright.sync_api")
         except ImportError as exc:
             raise FetchError(
                 "playwright_not_installed",
                 "install the worker browser extra and Chromium before using render_js",
             ) from exc
-        self._playwright_factory = sync_playwright
-        self._playwright_timeout_error = PlaywrightTimeoutError
+        self._playwright_factory = playwright_sync_api.sync_playwright
+        self._playwright_timeout_error = playwright_sync_api.TimeoutError
 
     def fetch(self, url: str, request: RequestConfig, max_retries: int) -> FetchResult:
         if not self._robots.allowed(url, request.user_agent):
@@ -158,7 +164,9 @@ class BrowserFetcher(HttpFetcher):
             except self._playwright_timeout_error:
                 last_error = FetchError("render_timeout", "browser page timed out")
             except Exception:
-                last_error = FetchError("render_error", "browser page could not be rendered")
+                last_error = FetchError(
+                    "render_error", "browser page could not be rendered"
+                )
             if attempt < max_retries:
                 time.sleep(min(2.0, 0.5 * (2**attempt)))
         if last_error:
